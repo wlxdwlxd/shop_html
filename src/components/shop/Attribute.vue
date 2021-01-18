@@ -16,28 +16,23 @@
         width="70">
       </el-table-column>
 
-      <el-table-column
-        prop="name"
-        label="名称"
-        width="180">
-      </el-table-column>
 
       <el-table-column
         prop="nameCH"
         label="中文名称">
       </el-table-column>
 
-
+      <el-table-column
+        prop="name"
+        label="英文名称"
+        width="180">
+      </el-table-column>
 
       <el-table-column
         prop="typeId"
         label="分类">
       </el-table-column>
 
-      <!--<el-table-column
-        prop="ord"
-        label="汽车品牌">
-      </el-table-column>-->
 
       <el-table-column
         prop="type"
@@ -94,33 +89,26 @@
     <el-dialog title="录入属性信息" :visible.sync="selectValueFlag">
       <el-button type="success" icon="el-icon-plus" circle @click="showValueFrom"></el-button>
       <el-table
-        :data="tableData"
+        :data="tableDataValue"
         style="width: 100%"
-        @row-click=""
       >
 
         <el-table-column
-          prop="skuId"
+          prop="id"
           label="序号"
           width="70">
         </el-table-column>
 
         <el-table-column
-          prop="value"
-          label="名称"
-          width="180">
-        </el-table-column>
-
-        <el-table-column
-          prop="valueName"
+          prop="nameCH"
           label="中文名称">
         </el-table-column>
 
         <el-table-column
-          prop="attrId"
-          label="分类">
+          prop="name"
+          label="英文名称"
+          width="180">
         </el-table-column>
-
 
         <el-table-column
           fixed="right"
@@ -135,10 +123,10 @@
 
 
       <el-form :model="valueform" label-width="80px" v-if="ShowValueFormTable">
-        <el-form-item label="选项中文名称">
+        <el-form-item label="中文名称">
           <el-input v-model="valueform.nameCH"></el-input>
         </el-form-item>
-        <el-form-item label="选项值">
+        <el-form-item label="英文名称">
           <el-input v-model="valueform.name"></el-input>
         </el-form-item>
 
@@ -148,10 +136,10 @@
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
+      <!--<div slot="footer" class="dialog-footer">
         <el-button @click="selectValueFlag = false">取 消</el-button>
         <el-button type="primary">确 定</el-button>
-      </div>
+      </div>-->
     </el-dialog>
 
 
@@ -264,6 +252,7 @@
     name: "Attribute",
     data(){
       return{
+        tableDataValue:[],
         valueform:{
           name:"",
           attrId:"",
@@ -274,7 +263,6 @@
         size:10,
         start:1,
         count:0,
-
         /*新增*/
         addFormFlag:false,
         addAttributeForm:{
@@ -335,10 +323,19 @@
         athis.updateAttributeForm.isSKU=row.isSKU;
         athis.updateAttributeForm.isDel=row.isDel;
         athis.updateAttributeForm.author=row.author;
+        athis.querySkuValue(athis.updateAttributeForm.id);
         console.log("属性修改"+JSON.stringify(row))//此时就能拿到整行的信息
       },
+      querySkuValue:function(skuId){
+        var athis=this;
+        this.$ajax.get("http://localhost:8080/api/skuValue/querySkuValue?skuId="+skuId).then(function (res) {
+          console.log(res);
+          athis.tableDataValue=res.data.data;
+        }).catch(function () {
+          this.$message.success("失败");
+        })
+      },
       updateForm:function (rs) {
-        console.log("ssss"+rs);
         var a =this;
         this.$ajax.post("http://localhost:8080/api/attribute/updateAttributeById",this.$qs.stringify(this.updateAttributeForm)).then(res=>{
           this.updateFormFlag=false;
