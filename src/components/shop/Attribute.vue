@@ -180,8 +180,15 @@
           <el-input v-model="addAttributeForm.nameCH"></el-input>
         </el-form-item>
 
-        <el-form-item label="TypeId" prop="typeId">
+      <!--  <el-form-item label="TypeId" prop="typeId">
           <el-input v-model="addAttributeForm.typeId"></el-input>
+        </el-form-item>-->
+
+        <el-form-item label="分类">
+          <el-select v-model="addAttributeForm.typeId" placeholder="请选择分类">
+            <el-option label="请选择" :value="-1"></el-option>
+            <el-option v-for="item in types" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="是否SKU" prop="isSKU">
@@ -294,6 +301,13 @@
           isSKU:"",
           isDel:"0",
         },
+
+        /*  需要数据做转换   */
+        ajaxTypeData:[],
+        typeName:"",
+        types:[],
+
+
         updateFormFlag:false,
         updateAttributeForm:{
           name:"",
@@ -314,6 +328,60 @@
       }
     },
     methods:{
+      formaterTypeData:function(){
+        this.$ajax.get("http://192.168.1.35:8080/api/type/getData").then(res=>{
+          // [{id:1,"name":"",pid:2},{}]
+          this.ajaxTypeData=res.data.data;
+          //{"id":7,name:"分类/电子产品/手机"},
+          //先找到子节点的数据   this.types;
+          this.getChildrenType();
+          debugger;
+          //遍历所有的子节点
+          for (let i = 0; i <this.types.length ; i++) {
+            this.typeName=""; // 全局变量   临时存 层级名称
+            //处理子节点的name属性
+            this.chandleName(this.types[i]);
+            //   a/b/c/f/d/e
+            //给name重新赋值
+            this.types[i].name=this.typeName.split("/").reverse().join("/");
+          }
+        })
+      },
+      chandleName:function(node){
+        if(node.pid!=0){ //临界值
+          this.typeName+="/"+node.name;
+          //上级节点
+          for (let i = 0; i <this.ajaxTypeData.length ; i++) {
+            if(node.pid==this.ajaxTypeData[i].id){
+              this.chandleName(this.ajaxTypeData[i]);
+              break;
+            }
+          }
+
+        }else{
+          this.typeName+="/"+node.name;
+        }
+      },
+      //得到types的数据      遍历所有ajaxtypedata
+      getChildrenType:function(){
+        //遍历所有的节点数据
+        for (let i = 0; i <this.ajaxTypeData.length ; i++) {
+          let  node=this.ajaxTypeData[i];
+          this.isChildrenNode(node);
+        }
+      },
+      isChildrenNode:function(node){
+        let rs=true; //标示
+        for (let i = 0; i <this.ajaxTypeData.length ; i++) {
+          if(node.id==this.ajaxTypeData[i].pid){
+            rs=false;
+            break;
+          }
+        }
+        if(rs==true){
+          this.types.push(node);
+        }
+      },
       queryData:function () {
         var athis=this;
         this.$ajax.get("http://localhost:8080/api/attribute/queryAttByPage?start="+this.start+"&size="+this.size).then(function (res) {
@@ -362,6 +430,7 @@
         var a =this;
         this.$ajax.post("http://localhost:8080/api/skuValue/updateSku",this.$qs.stringify(this.updateSkuValueForm)).then(res=>{
           this.updateSkuVaFlag=false;
+          a.getSkuVaDeta();
         }).catch(err=>console.log(err))
       },
       querySkuValue:function(skuId){
@@ -417,7 +486,7 @@
     },created:function () {
       //请求数据
       this.queryData(1,2);
-      //查询品牌数据
+      this.formaterTypeData();
     }
   }
 </script>
