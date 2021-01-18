@@ -91,6 +91,7 @@
       <el-table
         :data="tableDataValue"
         style="width: 100%"
+        @row-click="getSkuVaDeta"
       >
 
         <el-table-column
@@ -116,7 +117,7 @@
           label="操作"
           width="300">
           <template slot-scope="scope">
-            <el-button type="success" size="small" >编辑</el-button>
+            <el-button type="success" size="small" v-on:click="updateSkuVaFlag=true">编辑</el-button>
             <el-button type="danger" size="small" v-on:click="deleteSkuValue(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -145,6 +146,24 @@
     </el-dialog>
 
 
+    <!--  修改属性的弹框   -->
+    <el-dialog title="录入属性信息"  :visible.sync="updateSkuVaFlag">
+
+      <el-form :model="updateSkuValueForm"   label-width="80px">
+
+        <el-form-item label="英文名称" prop="name">
+          <el-input v-model="updateSkuValueForm.name"  ></el-input>
+        </el-form-item>
+        <el-form-item label="中文名称" prop="nameCH">
+          <el-input v-model="updateSkuValueForm.nameCH"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateSkuVaFlag = false">取 消</el-button>
+        <el-button type="primary" @click="updateSkuValue">确 定</el-button>
+      </div>
+    </el-dialog>
 
 
     <!--  新增的弹框   -->
@@ -286,7 +305,12 @@
           author:""
         },
         selectValueFlag:false,
-        ShowValueFormTable:false
+        ShowValueFormTable:false,
+        updateSkuVaFlag:false,
+        updateSkuValueForm:{
+          name:"",
+          nameCH:""
+        }
       }
     },
     methods:{
@@ -327,6 +351,18 @@
         athis.updateAttributeForm.author=row.author;
         athis.querySkuValue(athis.updateAttributeForm.id);
         console.log("属性修改"+JSON.stringify(row))//此时就能拿到整行的信息
+      },getSkuVaDeta(row){
+        var athis = this;
+        athis.updateSkuValueForm.id=row.id;
+        athis.updateSkuValueForm.attrId=row.attrId;
+        athis.updateSkuValueForm.name=row.name;
+        athis.updateSkuValueForm.nameCH=row.nameCH;
+      },
+      updateSkuValue:function(){
+        var a =this;
+        this.$ajax.post("http://localhost:8080/api/skuValue/updateSku",this.$qs.stringify(this.updateSkuValueForm)).then(res=>{
+          this.updateSkuVaFlag=false;
+        }).catch(err=>console.log(err))
       },
       querySkuValue:function(skuId){
         var athis=this;
