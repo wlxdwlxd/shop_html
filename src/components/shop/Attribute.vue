@@ -110,12 +110,14 @@
           width="180">
         </el-table-column>
 
+
         <el-table-column
           fixed="right"
           label="操作"
-          width="200">
+          width="300">
           <template slot-scope="scope">
-
+            <el-button type="success" size="small" >编辑</el-button>
+            <el-button type="danger" size="small" v-on:click="deleteSkuValue(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
 
@@ -351,6 +353,12 @@
           //关闭form表单
           this.ShowValueFormTable=false;
           //刷新table
+        })
+      },
+      deleteSkuValue:function(skuId){
+        alert(skuId);
+        this.$ajax.get("http://localhost:8080/api/skuValue/deleteSku?skuId="+skuId).then(function (res) {
+          alert("删除成功");
         })
       },
       showValueFrom:function () {
