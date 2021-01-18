@@ -13,7 +13,7 @@
       <el-table-column
         prop="id"
         label="序号"
-        width="180">
+        width="70">
       </el-table-column>
 
       <el-table-column
@@ -31,7 +31,7 @@
 
       <el-table-column
         prop="typeId"
-        label="品牌id">
+        label="分类">
       </el-table-column>
 
       <!--<el-table-column
@@ -71,10 +71,10 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="100">
+        width="200">
         <template slot-scope="scope">
-          <el-button type="text" size="small"
-                     @click="() => updateFormFlag=true">编辑</el-button>
+          <el-button type="text" size="small" v-if="scope.row.type!=3" v-on:click= "selectValueFlagDiv(scope.row)">维护分类</el-button>
+          <el-button type="text" size="small" @click="() => updateFormFlag=true">编辑</el-button>
           <el-button type="text" size="small" v-on:click="deleteSku(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -89,6 +89,72 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="count">
     </el-pagination>
+
+    <!--  维护分类的弹框   -->
+    <el-dialog title="录入属性信息" :visible.sync="selectValueFlag">
+      <el-button type="success" icon="el-icon-plus" circle @click="showValueFrom"></el-button>
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        @row-click=""
+      >
+
+        <el-table-column
+          prop="skuId"
+          label="序号"
+          width="70">
+        </el-table-column>
+
+        <el-table-column
+          prop="value"
+          label="名称"
+          width="180">
+        </el-table-column>
+
+        <el-table-column
+          prop="valueName"
+          label="中文名称">
+        </el-table-column>
+
+        <el-table-column
+          prop="attrId"
+          label="分类">
+        </el-table-column>
+
+
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="200">
+          <template slot-scope="scope">
+
+          </template>
+        </el-table-column>
+
+      </el-table>
+
+
+      <el-form :model="valueform" label-width="80px" v-if="ShowValueFormTable">
+        <el-form-item label="选项中文名称">
+          <el-input v-model="valueform.nameCH"></el-input>
+        </el-form-item>
+        <el-form-item label="选项值">
+          <el-input v-model="valueform.name"></el-input>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="addValue">添加</el-button>
+          <el-button @click="ShowValueFormTable=false">取消</el-button>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="selectValueFlag = false">取 消</el-button>
+        <el-button type="primary">确 定</el-button>
+      </div>
+    </el-dialog>
+
+
 
 
     <!--  新增的弹框   -->
@@ -198,6 +264,11 @@
     name: "Attribute",
     data(){
       return{
+        valueform:{
+          name:"",
+          attrId:"",
+          nameCH:""
+        },
         tableData:[],
         sizes:[2,3,5,10],
         size:10,
@@ -223,7 +294,9 @@
           isSKU:"",
           isDel:"",
           author:""
-        }
+        },
+        selectValueFlag:false,
+        ShowValueFormTable:false
       }
     },
     methods:{
@@ -262,7 +335,7 @@
         athis.updateAttributeForm.isSKU=row.isSKU;
         athis.updateAttributeForm.isDel=row.isDel;
         athis.updateAttributeForm.author=row.author;
-       // console.log("属性修改"+JSON.stringify(row))//此时就能拿到整行的信息
+        console.log("属性修改"+JSON.stringify(row))//此时就能拿到整行的信息
       },
       updateForm:function (rs) {
         console.log("ssss"+rs);
@@ -272,6 +345,23 @@
           a.queryData(1);
 
         }).catch(err=>console.log(err))
+
+      },
+      addValue:function(){
+        //发起请求 添加数据
+        this.$ajax.post("http://localhost:8080/api/skuValue/addSkuValue",this.$qs.stringify(this.valueform)).then(res=>{
+          this.$message.success("新增成功");
+          //关闭form表单
+          this.ShowValueFormTable=false;
+          //刷新table
+        })
+      },
+      showValueFrom:function () {
+        this.ShowValueFormTable=true
+      },
+      selectValueFlagDiv:function (row) {
+        this.selectValueFlag=true;
+        this.valueform.attrId=row.id;
 
       }
       ,handleCurrentChange:function(start){ //跳转页面

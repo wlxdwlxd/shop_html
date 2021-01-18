@@ -114,7 +114,7 @@
         <el-form-item label="LOGO">
           <el-upload
             class="upload-demo"
-            action="http://192.168.1.35:8080/uploadFile/photo"
+            action="http://192.168.1.35:8080/uploadFile/uploadFiles"
             :on-success="imgCallBack"
             name="file"
             list-type="picture">
@@ -166,7 +166,7 @@
         <el-form-item label="LOGO">
           <el-upload
             class="upload-demo"
-            action="http://192.168.1.35:8080/uploadFile/photo"
+            action="http://192.168.1.35:8080/uploadFile/uploadFiles"
             :on-success="imgCallBack"
             name="file"
             list-type="picture">
@@ -193,7 +193,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateFormFlag = false">取 消</el-button>
-        <el-button type="primary" @click="">确 定</el-button>
+        <el-button type="primary" @click="updateBrand">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -237,7 +237,7 @@
             },
             count:0,
             sizes:[2,3,5,10],
-            size:2,
+            size:10,
             start:1
           }
         },methods:{
@@ -260,7 +260,7 @@
         },
       imgCallBack:function(response, file, fileList){ //图片上传的回调函数
                                                        // 赋值
-        this.addBrandForm.imgPath=response.url;
+        this.addBrandForm.imgPath=response.data;
       },
       queryData:function () {
           var athis=this;
@@ -286,6 +286,14 @@
           }).catch(function () {
 
           })
+        },
+        updateBrand:function(rs){
+            console.log("ssss"+rs);
+            var a =this;
+            ajax.post("http://localhost:8080/api/brand/updateBrand",qs.stringify(this.updateBrandForm)).then(res=>{
+              this.updateFormFlag=false;
+              a.queryData(1);
+            }).catch(err=>console.log(err))
         },
         handleCurrentChange:function(start){ //跳转页面
           console.log(start);
