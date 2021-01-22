@@ -192,8 +192,8 @@
         </el-form-item>
 
         <el-form-item label="是否SKU" prop="isSKU">
-          <el-radio v-model="addAttributeForm.isSKU" label="0">否</el-radio>
-          <el-radio v-model="addAttributeForm.isSKU" label="1">是</el-radio>
+          <el-radio v-model="addAttributeForm.isSKU" label="0">是</el-radio>
+          <el-radio v-model="addAttributeForm.isSKU" label="1">否</el-radio>
         </el-form-item>
 
         <el-form-item label="是否删除" prop="isDel">
@@ -241,8 +241,8 @@
         </el-form-item>
 
         <el-form-item label="是否SKU" prop="isSKU">
-          <el-radio v-model="updateAttributeForm.isSKU" :label="0">否</el-radio>
-          <el-radio v-model="updateAttributeForm.isSKU" :label="1">是</el-radio>
+          <el-radio v-model="updateAttributeForm.isSKU" :label="0">是</el-radio>
+          <el-radio v-model="updateAttributeForm.isSKU" :label="1">否</el-radio>
         </el-form-item>
 
         <!--   <el-form-item label="是否删除" prop="isDel">

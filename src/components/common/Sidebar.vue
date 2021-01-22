@@ -71,9 +71,17 @@ export default {
                     title: '分类管理(立即加载)'
                   },
                   {
+                    index: 'Shop',
+                    title: '商品展示'
+                  },
+                  {
+                    index: 'AddShop',
+                    title: '商品新增'
+                  },
+                 /* {
                     index: 'Type2222',
                     title: '分类管理(懒加载)'
-                  },
+                  },*/
                   {
                     index: 'Brand',
                     title: '品牌管理'

@@ -176,7 +176,7 @@
         </el-form-item>
 
         <el-form-item label="描述信息" prop="bandDesc">
-          <el-input type="textarea" v-model="updateBrandForm.brandDesc"></el-input>
+          <el-input type="textarea" v-model="updateBrandForm.bandDesc"></el-input>
         </el-form-item>
 
         <el-form-item label="暗箱排序" prop="ord">
@@ -246,7 +246,7 @@
           athis.updateBrandForm.id=row.id;
           athis.updateBrandForm.name=row.name;
           athis.updateBrandForm.bandE=row.bandE;
-          athis.updateBrandForm.brandDesc=row.bandDesc;
+          athis.updateBrandForm.bandDesc=row.bandDesc;
           athis.updateBrandForm.ord=row.ord;
           athis.updateBrandForm.isDel=row.isDel;
           athis.updateBrandForm.imgPath=row.imgPath;

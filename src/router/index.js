@@ -24,6 +24,15 @@ export default new Router({
               path: '/test',
               component: () => import(/* webpackChunkName: "dashboard" */ '../components/Test.vue'),
               meta: { title: '系统首页' }
+            }, {
+              path: '/AddShop',
+              component: () => import(/* webpackChunkName: "dashboard" */ '../components/shop/AddShop.vue'),
+              meta: { title: '商品新增' }
+            },
+            {
+              path: '/Shop',
+              component: () => import(/* webpackChunkName: "dashboard" */ '../components/shop/Shop.vue'),
+              meta: { title: '商品展示' }
             },{
               path: '/Type',
               component: () => import(/* webpackChunkName: "dashboard" */ '../components/shop/Type.vue'),
